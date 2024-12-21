@@ -7,20 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
-
 {
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
     /**
@@ -31,15 +18,14 @@ class LoginController extends Controller
     // protected $redirectTo = '/home';
     public function authenticated()
     {
-        if(Auth::user()->role =='admin'){
-            return redirect('admin/dashboard')->with('status','welcome to admin dashboard');
-
-        }else if(Auth::user()->role=='user'){
-            return redirect('/home')->with('status','logged in succsfly');
-
-        }else{
-            return redirect('/');
+        // تحقق إذا كان المستخدم هو role 'user' فقط
+        if (Auth::check() && Auth::user()->role == 'user') {
+            return redirect('/')->with('status', 'Logged in successfully as a user');
         }
+
+        // إذا لم يكن "user"، تسجيل الخروج وإعادة التوجيه
+        Auth::logout();
+        return redirect('/login')->withErrors(['error' => 'Unauthorized access.']);
     }
 
     /**

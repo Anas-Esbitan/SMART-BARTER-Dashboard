@@ -3,6 +3,7 @@
 @section('title', 'Products Management')
 
 @section('content')
+
 <div class="container-fluid px-4">
     <!-- العنوان وزر إضافة منتج -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,15 +13,10 @@
 
     <div class="card mt-4">
         <div class="card-header">
-            <!-- نموذج البحث -->
-            <form action="{{ route('admin.products') }}" method="GET" class="d-flex mt-2">
-                <input type="text" name="search" class="form-control me-2" placeholder="Search by name..." value="{{ request('search') }}">
-                <button class="btn btn-primary">Search</button>
-            </form>
+            <h5>Products</h5>
         </div>
         <div class="card-body">
-            @if($products->count())
-            <table class="table table-bordered table-striped">
+            <table id="products-table" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -28,7 +24,6 @@
                         <th>Price</th>
                         <th>Status</th>
                         <th>Category</th>
-                        <th>Owner</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -40,7 +35,6 @@
                             <td>${{ $product->price }}</td>
                             <td>{{ ucfirst($product->status) }}</td>
                             <td>{{ $product->category->name }}</td>
-                            <td>{{ $product->user->name }}</td>
                             <td>
                                 <a href="{{ route('admin.edit-product', $product->id) }}" class="btn btn-success btn-sm">Edit</a>
                                 <form action="{{ route('admin.delete-product', $product->id) }}" method="POST" class="d-inline">
@@ -53,11 +47,25 @@
                     @endforeach
                 </tbody>
             </table>
-            {{ $products->links() }}
-            @else
-            <p class="text-center">No products found.</p>
-            @endif
         </div>
     </div>
 </div>
+
+@endsection
+
+@section('scripts')
+
+<script>
+    $(document).ready(function() {
+        $('#products-table').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true
+        });
+    });
+</script>
 @endsection

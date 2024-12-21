@@ -17,8 +17,8 @@
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
-                    <th>Phone Number</th> <!-- إضافة العمود الجديد -->
-                    <th>Address</th> <!-- إضافة العمود الجديد -->
+                    <th>Phone Number</th>
+                    <th>Address</th> 
                     <th>Role</th>
                     <th>Actions</th>
                 </tr>
@@ -26,7 +26,7 @@
             <tbody>
                 @foreach ($users as $user)
                     <tr>
-                        <td>{{ $user->First_name }}</td>
+                        <td>{{ $user->First_Name }}</td>
                         <td>{{ $user->Last_name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->phone_number }}</td> <!-- عرض رقم الهاتف -->

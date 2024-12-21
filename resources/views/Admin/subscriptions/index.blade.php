@@ -26,7 +26,7 @@
             @foreach ($subscriptions as $subscription)
                 <tr>
                     <td>{{ $subscription->id }}</td>
-                    <td>{{ $subscription->user->First_name }}</td>
+                    <td>{{ $subscription->user->First_Name }}</td>
                     <td>{{ $subscription->subscription_type }}</td>
                     <td>{{ $subscription->price }}</td>
                     <td>{{ $subscription->status }}</td>

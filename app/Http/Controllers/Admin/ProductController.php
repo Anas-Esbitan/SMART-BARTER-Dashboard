@@ -5,112 +5,112 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\categories;
+use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    // عرض قائمة المنتجات
     public function index()
     {
-        $products = Product::with('category', 'user')->paginate(10);// جلب المنتجات مع التصنيفات والمستخدمين
+        $products = Product::with('category', 'user', 'images')->paginate(10);
         return view('admin.products.index', compact('products'));
     }
 
-    // عرض صفحة إضافة منتج
     public function create()
     {
-        $categories = categories::all(); // جلب جميع التصنيفات
+        $categories = categories::all();
         return view('admin.products.create', compact('categories'));
     }
 
-    // تخزين المنتج الجديد
     public function store(Request $request)
     {
-        // التحقق من المدخلات
         $request->validate([
             'name' => 'required|string|max:100',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'status' => 'required|in:available,sold,swapped',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // التحقق من الصورة
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // التحقق من الصور المتعددة
         ]);
 
-        // رفع الصورة (إذا كانت موجودة)
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-        }
-
-        // تخزين المنتج في قاعدة البيانات
-        Product::create([
-            'user_id' => auth()->id(), // المستخدم المسؤول عن الإضافة
+        // إنشاء المنتج
+        $product = Product::create([
+            'user_id' => auth()->id(),
             'category_id' => $request->category_id,
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'status' => $request->status,
-            'image' => $imagePath,
         ]);
+
+        // حفظ الصور إذا وُجدت
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('products', 'public');
+                Image::create([
+                    'product_id' => $product->id,
+                    'path' => $imagePath,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products')->with('success', 'Product added successfully.');
     }
 
-    // عرض صفحة تعديل منتج
     public function edit($id)
     {
-        $product = Product::findOrFail($id); // جلب المنتج بناءً على الـ ID
-        $categories = categories::all(); // جلب التصنيفات
+        $product = Product::with('images')->findOrFail($id);
+        $categories = categories::all();
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
-    // تحديث المنتج
     public function update(Request $request, $id)
     {
-        // التحقق من المدخلات
         $request->validate([
             'name' => 'required|string|max:100',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
             'status' => 'required|in:available,sold,swapped',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // التحقق من الصورة
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $product = Product::findOrFail($id); // جلب المنتج الذي سيتم تحديثه
+        $product = Product::findOrFail($id);
 
-        // رفع الصورة الجديدة إذا كانت موجودة
-        $imagePath = $product->image;
-        if ($request->hasFile('image')) {
-            // حذف الصورة القديمة إذا كانت موجودة
-            if ($product->image) {
-                unlink(storage_path('app/public/' . $product->image));
-            }
-            $imagePath = $request->file('image')->store('products', 'public');
-        }
-
-        // تحديث المنتج في قاعدة البيانات
+        // تحديث بيانات المنتج
         $product->update([
             'category_id' => $request->category_id,
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'status' => $request->status,
-            'image' => $imagePath,
         ]);
+
+        // حفظ الصور الجديدة
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('products', 'public');
+                Image::create([
+                    'product_id' => $product->id,
+                    'path' => $imagePath,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products')->with('success', 'Product updated successfully.');
     }
 
-    // حذف المنتج
     public function destroy($id)
     {
-        $product = Product::findOrFail($id); // جلب المنتج
-        // حذف الصورة القديمة إذا كانت موجودة
-        if ($product->image) {
-            unlink(storage_path('app/public/' . $product->image));
+        $product = Product::findOrFail($id);
+
+        // حذف الصور من التخزين
+        foreach ($product->images as $image) {
+            Storage::delete('public/' . $image->path);
+            $image->delete();
         }
-        // حذف المنتج
+
         $product->delete();
 
         return redirect()->route('admin.products')->with('success', 'Product deleted successfully.');

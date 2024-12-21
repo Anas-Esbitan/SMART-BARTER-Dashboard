@@ -53,10 +53,10 @@
                 </div>
 
                 <!-- Image -->
-                <div class="mb-3">
-                    <label for="image" class="form-label">Product Image</label>
-                    <input type="file" name="image" class="form-control">
-                </div>
+                <div class="form-group">
+        <label for="images">Upload Images</label>
+        <input type="file" name="images[]" multiple class="form-control">
+    </div>
 
                 <button type="submit" class="btn btn-primary">Add Product</button>
             </form>

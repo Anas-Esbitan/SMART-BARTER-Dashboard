@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // المستخدم المرتبط
-            $table->enum('status', ['active', 'expired', 'cancelled'])->default('active'); // حالة الاشتراك
-            $table->decimal('price', 8, 2); // تكلفة الاشتراك
-            $table->string('subscription_type'); // نوع الاشتراك (شهري، سنوي، إلخ)
-            $table->date('start_date'); // بداية الاشتراك
-            $table->date('end_date'); // نهاية الاشتراك
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
+            $table->enum('status', ['active', 'expired', 'cancelled'])->default('active');             $table->decimal('price', 8, 2); 
+            $table->string('subscription_type');
+            $table->date('start_date'); 
+            $table->date('end_date');   
             $table->timestamps();
         });
         

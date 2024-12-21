@@ -25,7 +25,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'First_name' => 'required|string|max:255',
+            'First_Name' => 'required|string|max:255',
             'Last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
@@ -35,19 +35,19 @@ class UserController extends Controller
         ]);
 
         $user = new User();
-        $user->First_name = $request->First_name;
+        $user->First_Name = $request->First_Name;
         $user->Last_name = $request->Last_name;
         $user->email = $request->email;
-        $user->password = Hash::make($request->password);  // تشفير كلمة المرور
+        $user->password = Hash::make($request->password);
         $user->phone_number = $request->phone_number;
         $user->role = $request->role;
         $user->address = $request->address;
-        $user->save();  // حفظ المستخدم الجديد
+        $user->save();  
 
         return redirect()->route('admin.users')->with('success', 'User created successfully!');
     }
 
-    // عرض نموذج تعديل المستخدم
+  
     public function edit($user_id)
     {
         $user = User::findOrFail($user_id);  // جلب المستخدم باستخدام ID
@@ -58,7 +58,7 @@ class UserController extends Controller
     public function update(Request $request, $user_id)
     {
         $request->validate([
-            'First_name' => 'required|string|max:255',
+            'First_Name' => 'required|string|max:255',
             'Last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user_id,
             'password' => 'nullable|string|min:8|confirmed',
@@ -68,11 +68,11 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($user_id);
-        $user->First_name = $request->First_name;
+        $user->First_Name = $request->First_Name;
         $user->Last_name = $request->Last_name;
         $user->email = $request->email;
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);  // تحديث كلمة المرور إذا تم تغييرها
+            $user->password = Hash::make($request->password);  
         }
         $user->phone_number = $request->phone_number;
         $user->role = $request->role;
@@ -91,4 +91,3 @@ class UserController extends Controller
         return redirect()->route('admin.users')->with('success', 'User deleted successfully!');
     }
 }
-

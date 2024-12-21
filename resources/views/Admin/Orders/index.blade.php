@@ -1,10 +1,13 @@
 @extends('layouts.master')
 
 @section('content')
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
     <h1>Orders</h1>
     <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">Add New Order</a>
 
-    <table class="table mt-4">
+    <table class="table mt-4" id="ordersTable">
         <thead>
             <tr>
                 <th>#</th>
@@ -19,7 +22,7 @@
             @foreach ($orders as $order)
                 <tr>
                     <td>{{ $order->id }}</td>
-                    <td>{{ $order->user->First_name }}</td>
+                    <td>{{ $order->user->First_Name }}</td>
                     <td>{{ $order->product->name }}</td>
                     <td>{{ $order->status }}</td>
                     <td>{{ $order->amount }}</td>
@@ -33,6 +36,33 @@
                     </td>
                 </tr>
             @endforeach
+
         </tbody>
     </table>
-@endsection
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#ordersTable').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    search: "Search Orders:",
+                    lengthMenu: "Show _MENU_ orders per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ orders",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        });
+    </script>
+    
+    @endsection

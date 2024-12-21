@@ -18,16 +18,16 @@
 
                 <!-- First name -->
                 <div class="mb-3">
-                    <label for="First_name" class="form-label">First name</label>
-                    <input type="text" name="First_name" class="form-control @error('First_name') is-invalid @enderror" value="{{ old('First_name', $user->First_name) }}" required>
-                    @error('First_name')
+                    <label for="First_Name" class="form-label">First Name</label>
+                    <input type="text" name="First_Name" class="form-control @error('First_Name') is-invalid @enderror" value="{{ old('First_Name', $user->First_Name) }}" required>
+                    @error('First_Name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Last name -->
                 <div class="mb-3">
-                    <label for="Last_name" class="form-label">Last name</label>
+                    <label for="Last_name" class="form-label">Last Name</label>
                     <input type="text" name="Last_name" class="form-control @error('Last_name') is-invalid @enderror" value="{{ old('Last_name', $user->Last_name) }}" required>
                     @error('Last_name')
                         <div class="invalid-feedback">{{ $message }}</div>

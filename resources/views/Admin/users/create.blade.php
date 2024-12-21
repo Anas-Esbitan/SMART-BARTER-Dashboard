@@ -10,9 +10,9 @@
 
             <!-- First name -->
             <div class="mb-3">
-                <label for="First_name" class="form-label">First name</label>
-                <input type="text" class="form-control" name="First_name" value="{{ old('First_name') }}" required>
-                @error('First_name')
+                <label for="First_Name" class="form-label">First name</label>
+                <input type="text" class="form-control" name="First_Name" value="{{ old('First_Name') }}" required>
+                @error('First_Name')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
